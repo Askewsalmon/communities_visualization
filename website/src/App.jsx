@@ -6,56 +6,35 @@ import ThreeDGraph from "./components/3DGraph";
 import _ from "lodash";
 
 function App() {
-  const [graphData, setGraphData] = useState({
-    nodes: FoodCliques.graph_data.nodes,
-    links: FoodCliques.graph_data.links,
-  });
-  const [mode, setMode] = useState("cliques");
+  const [graphData, setGraphData] = useState(undefined);
+  const [mode, setMode] = useState(undefined);
   const [cliques, setCliques] = useState(undefined);
-  const [commmunities, setCommunities] = useState(undefined);
+  const [communities, setCommunities] = useState(undefined);
 
-  const [nodeColors, setNodeColors] = useState(null);
-
-  const getRandomColor = () => {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  };
-
-  const createColorsDictionary = () => {
-    const colors = {};
-    _.forEach(cliques, (clique) => {
-      const color = getRandomColor();
-      _.forEach(clique, (nodeIndex) => {
-        if (!colors[nodeIndex]) {
-          colors[nodeIndex] = color;
-        }
-      });
-    });
-    return colors;
-  };
-
+  useEffect(() => {
+    setMode("community");
+  }, []);
   useEffect(() => {
     if (mode === "cliques") {
       setCliques(FoodCliques.max_cliques);
-    } else {
+      setGraphData({
+        nodes: FoodCliques.graph_data.nodes,
+        links: FoodCliques.graph_data.links,
+      });
+      setCommunities(undefined);
+    } else if (mode === "community") {
       setCommunities(FoodCommunities.communities);
+      setGraphData({
+        nodes: FoodCommunities.graph.nodes,
+        links: FoodCommunities.graph.edges,
+      });
+      setCliques(undefined);
     }
   }, [mode]);
 
-  useEffect(() => {
-    if (cliques) {
-      const colors = createColorsDictionary(cliques);
-      setNodeColors(colors);
-    }
-  }, [cliques]);
-
   return (
-    <Layout>
-      <ThreeDGraph graphData={graphData} nodeColors={nodeColors} />
+    <Layout mode={mode} setMode={setMode}>
+      <ThreeDGraph graphData={graphData} />
     </Layout>
   );
 }

@@ -1,9 +1,9 @@
 import Layout from "./layout/Layout";
 import FoodCliques from "../public/graph_data/fb-food/graph_data_cliques.json";
 import FoodCommunities from "../public/graph_data/fb-food/graph_data_communities.json";
-import { useEffect, useState, useRef } from "react";
-import { ForceGraph3D } from "react-force-graph";
-import _, { set } from "lodash";
+import { useEffect, useState } from "react";
+import ThreeDGraph from "./components/3DGraph";
+import _ from "lodash";
 
 function App() {
   const [graphData, setGraphData] = useState({
@@ -13,10 +13,8 @@ function App() {
   const [mode, setMode] = useState("cliques");
   const [cliques, setCliques] = useState(undefined);
   const [commmunities, setCommunities] = useState(undefined);
-  const graphRef = useRef();
-  const [nodeColors, setNodeColors] = useState(null);
 
-  const graphHeight = window.innerHeight - 24;
+  const [nodeColors, setNodeColors] = useState(null);
 
   const getRandomColor = () => {
     const letters = "0123456789ABCDEF";
@@ -57,23 +55,7 @@ function App() {
 
   return (
     <Layout>
-      {nodeColors && (
-        <ForceGraph3D
-          ref={graphRef}
-          graphData={graphData}
-          height={graphHeight}
-          d3AlphaDecay={0.02}
-          d3VelocityDecay={0.7}
-          nodeAutoColorBy={(node) => nodeColors[node.id]}
-          linkAutoColorBy={(link) => nodeColors[link.source]}
-          linkWidth={4}
-          nodeRelSize={6}
-          enableNodeDrag={false}
-          nodeOpacity={1}
-          linkOpacity={0.6}
-          controlType="orbit"
-        />
-      )}
+      <ThreeDGraph graphData={graphData} nodeColors={nodeColors} />
     </Layout>
   );
 }

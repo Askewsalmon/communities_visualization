@@ -25,7 +25,7 @@ function App() {
   };
 
   useEffect(() => {
-    setMode("community");
+    setMode("cliques");
   }, []);
   useEffect(() => {
     if (mode === "cliques") {

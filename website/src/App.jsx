@@ -3,11 +3,13 @@ import FoodCliques from "../public/graph_data/fb-food/graph_data_cliques.json";
 import FoodCommunities from "../public/graph_data/fb-food/graph_data_communities.json";
 import { useEffect, useState } from "react";
 import ThreeDGraph from "./components/3DGraph";
+import TwoDGraph from "./components/2DGraph";
 import _ from "lodash";
 
 function App() {
   const [graphData, setGraphData] = useState(undefined);
   const [mode, setMode] = useState(undefined);
+  const [visualizationMode, setVisualizationMode] = useState("2D");
   const [cliques, setCliques] = useState(undefined);
   const [communities, setCommunities] = useState(undefined);
   const [nodeColors, setNodeColors] = useState([]);
@@ -69,8 +71,14 @@ function App() {
   }, [nodeColors]);
 
   return (
-    <Layout mode={mode} setMode={setMode}>
-      <ThreeDGraph graphData={graphData} />
+    <Layout
+      mode={mode}
+      setMode={setMode}
+      visualizationMode={visualizationMode}
+      setVisualizationMode={setVisualizationMode}
+    >
+      {visualizationMode === "3D" && <ThreeDGraph graphData={graphData} />}
+      {visualizationMode === "2D" && <TwoDGraph graphData={graphData} />}
     </Layout>
   );
 }

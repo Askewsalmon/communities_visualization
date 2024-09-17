@@ -1,21 +1,36 @@
 import PropTypes from "prop-types";
 import Button from "./Button";
-const Header = ({ mode, setMode }) => {
+const Header = ({ mode, setMode, visualizationMode, setVisualizationMode }) => {
   return (
-    <header className="bg-slate-950 w-full fixed z-40">
+    <header className="bg-transparent w-full fixed z-40">
       <div className="container h-16 flex p-4 mx-auto">
-        <div className="flex ml-auto border-white border-solid rounded-lg border h-fit">
-          <Button
-            label="Clique"
-            onClick={() => setMode("cliques")}
-            active={mode == "cliques"}
-          />
-          <Button
-            label="Community"
-            isRight
-            onClick={() => setMode("community")}
-            active={mode === "community"}
-          />
+        <div className="flex ml-auto ">
+          <div className="flex border-white border-solid rounded-lg border h-fit mr-6">
+            <Button
+              label="2D Graph"
+              onClick={() => setVisualizationMode("2D")}
+              active={visualizationMode == "2D"}
+            />
+            <Button
+              label="3D Graph"
+              isRight
+              onClick={() => setVisualizationMode("3D")}
+              active={visualizationMode === "3D"}
+            />
+          </div>
+          <div className="border-white border-solid rounded-lg border h-fit">
+            <Button
+              label="Clique"
+              onClick={() => setMode("cliques")}
+              active={mode == "cliques"}
+            />
+            <Button
+              label="Community"
+              isRight
+              onClick={() => setMode("community")}
+              active={mode === "community"}
+            />
+          </div>
         </div>
       </div>
     </header>
@@ -25,6 +40,8 @@ const Header = ({ mode, setMode }) => {
 Header.propTypes = {
   mode: PropTypes.string.isRequired,
   setMode: PropTypes.func.isRequired,
+  visualizationMode: PropTypes.string.isRequired,
+  setVisualizationMode: PropTypes.func.isRequired,
 };
 
 export default Header;

@@ -4,15 +4,14 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 const ThreeDGraph = ({ graphData }) => {
   const graphRef = useRef();
-  const graphHeight = window.innerHeight - 24;
   return (
     graphData && (
       <ForceGraph3D
         ref={graphRef}
         graphData={graphData}
-        height={graphHeight}
         d3AlphaDecay={0.01}
         d3VelocityDecay={0.5}
+        backgroundColor="black"
         nodeColor={(node) => node.color}
         linkColor={(link) => {
           if (link.source.color) {

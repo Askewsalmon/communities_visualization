@@ -1,10 +1,28 @@
 import Layout from "./layout/Layout";
-import FoodCliques from "../public/graph_data/fb-food/graph_data_cliques.json";
-import FoodCommunities from "../public/graph_data/fb-food/graph_data_communities.json";
+import FoodCliques from "../public/graph_data/fb-food/graph_data_food_cliques.json";
+import FoodCommunities from "../public/graph_data/fb-food/graph_data_food_communities.json";
+import TvShowCliques from "../public/graph_data/fb-tvshow/graph_data_tvshow_cliques.json";
+import TvShowCommunities from "../public/graph_data/fb-tvshow/graph_data_tvshow_communities.json";
 import { useEffect, useState } from "react";
 import ThreeDGraph from "./components/3DGraph";
 import TwoDGraph from "./components/2DGraph";
 import _ from "lodash";
+
+const selectOptions = [
+  { value: "Food", label: "Food (620)" },
+  { value: "TvShow", label: "Tv Show (4k)" },
+];
+
+const graphDictionary = {
+  Food: {
+    cliques: FoodCliques,
+    community: FoodCommunities,
+  },
+  TvShow: {
+    cliques: TvShowCliques,
+    community: TvShowCommunities,
+  },
+};
 
 function App() {
   const [graphData, setGraphData] = useState(undefined);
@@ -12,6 +30,7 @@ function App() {
   const [visualizationMode, setVisualizationMode] = useState("2D");
   const [cliques, setCliques] = useState(undefined);
   const [communities, setCommunities] = useState(undefined);
+  const [graphName, setGraphName] = useState(undefined);
   const [nodeColors, setNodeColors] = useState([]);
 
   const generateColor = (existingColors) => {
@@ -27,37 +46,44 @@ function App() {
   };
 
   useEffect(() => {
+    setGraphName("Food");
     setMode("community");
   }, []);
   useEffect(() => {
-    if (mode === "cliques") {
-      setNodeColors([]);
-      setCommunities(undefined);
-      let colors = [];
-      setCliques(FoodCliques.max_cliques);
-      setGraphData({
-        nodes: FoodCliques.graph_data.nodes,
-        links: FoodCliques.graph_data.links,
-      });
-      _.forEach(FoodCliques.max_cliques, (clique) => {
-        colors.push({ element: clique.name, color: generateColor(colors) });
-      });
-      setNodeColors(colors);
-    } else if (mode === "community") {
-      setNodeColors([]);
-      setCliques(undefined);
-      let colors = [];
-      setCommunities(FoodCommunities.communities);
-      setGraphData({
-        nodes: FoodCommunities.graph.nodes,
-        links: FoodCommunities.graph.edges,
-      });
-      _.forEach(FoodCommunities.communities, (community) => {
-        colors.push({ element: community.name, color: generateColor(colors) });
-      });
-      setNodeColors(colors);
+    if (graphName && mode) {
+      const data = graphDictionary[graphName][mode];
+      if (mode === "cliques") {
+        setNodeColors([]);
+        setCommunities(undefined);
+        let colors = [];
+        setCliques(data.max_cliques);
+        setGraphData({
+          nodes: data.graph_data.nodes,
+          links: data.graph_data.links,
+        });
+        _.forEach(data.max_cliques, (clique) => {
+          colors.push({ element: clique.name, color: generateColor(colors) });
+        });
+        setNodeColors(colors);
+      } else if (mode === "community") {
+        setNodeColors([]);
+        setCliques(undefined);
+        let colors = [];
+        setCommunities(data.communities);
+        setGraphData({
+          nodes: data.graph.nodes,
+          links: data.graph.edges,
+        });
+        _.forEach(data.communities, (community) => {
+          colors.push({
+            element: community.name,
+            color: generateColor(colors),
+          });
+        });
+        setNodeColors(colors);
+      }
     }
-  }, [mode]);
+  }, [mode, graphName]);
 
   useEffect(() => {
     if (!_.isEmpty(nodeColors) && graphData) {
@@ -71,6 +97,9 @@ function App() {
   }, [nodeColors]);
   return (
     <Layout
+      selectOptions={selectOptions}
+      graphName={graphName}
+      setGraphName={setGraphName}
       mode={mode}
       setMode={setMode}
       visualizationMode={visualizationMode}

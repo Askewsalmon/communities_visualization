@@ -2,6 +2,9 @@ import PropTypes from "prop-types";
 import Header from "../components/Header";
 const Layout = ({
   children,
+  selectOptions,
+  graphName,
+  setGraphName,
   mode,
   setMode,
   visualizationMode,
@@ -10,6 +13,9 @@ const Layout = ({
   return (
     <>
       <Header
+        selectOptions={selectOptions}
+        graphName={graphName}
+        setGraphName={setGraphName}
         mode={mode}
         setMode={setMode}
         visualizationMode={visualizationMode}
@@ -28,6 +34,9 @@ Layout.propTypes = {
   setMode: PropTypes.func.isRequired,
   visualizationMode: PropTypes.string.isRequired,
   setVisualizationMode: PropTypes.func.isRequired,
+  selectOptions: PropTypes.array.isRequired,
+  graphName: PropTypes.string.isRequired,
+  setGraphName: PropTypes.func.isRequired,
 };
 
 export default Layout;

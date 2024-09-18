@@ -11,7 +11,7 @@ const TwoDGraph = ({ graphData }) => {
         ref={graphRef}
         graphData={graphData}
         d3AlphaDecay={0.02}
-        d3VelocityDecay={0.5}
+        d3VelocityDecay={0.4}
         backgroundColor="black"
         nodeColor={(node) => node.color}
         linkColor={(link) => {

@@ -27,7 +27,7 @@ function App() {
   };
 
   useEffect(() => {
-    setMode("cliques");
+    setMode("community");
   }, []);
   useEffect(() => {
     if (mode === "cliques") {
@@ -63,13 +63,12 @@ function App() {
     if (!_.isEmpty(nodeColors) && graphData) {
       _.forEach(graphData.nodes, (node) => {
         const color = _.find(nodeColors, (element) => {
-          return element.element === `cliques ${node.community_name}`;
+          return element.element === node.community_name;
         });
         node.color = color.color;
       });
     }
   }, [nodeColors]);
-
   return (
     <Layout
       mode={mode}

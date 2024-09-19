@@ -6,7 +6,6 @@ import {
   ListboxOption,
 } from "@headlessui/react";
 const CustomSelect = ({ selectOptions, value, onChange }) => {
-  console.log(value);
   return (
     <Listbox value={value} onChange={onChange}>
       <div className="relative mr-6 w-40 h-[2.2rem]">

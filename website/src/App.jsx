@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import ThreeDGraph from "./components/3DGraph";
 import TwoDGraph from "./components/2DGraph";
 import _ from "lodash";
+import SideInformation from "./components/SideInformation";
 
 const selectOptions = [
   { value: "Food", label: "Food (620)" },
@@ -105,6 +106,10 @@ function App() {
       visualizationMode={visualizationMode}
       setVisualizationMode={setVisualizationMode}
     >
+      <SideInformation
+        graphData={graphData}
+        aggregations={cliques || communities}
+      />
       {visualizationMode === "3D" && <ThreeDGraph graphData={graphData} />}
       {visualizationMode === "2D" && <TwoDGraph graphData={graphData} />}
     </Layout>

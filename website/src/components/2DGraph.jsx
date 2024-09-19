@@ -1,10 +1,19 @@
 import { ForceGraph2D } from "react-force-graph";
 import PropTypes from "prop-types";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import _ from "lodash";
 
-const TwoDGraph = ({ graphData }) => {
+const TwoDGraph = ({ graphData, highlightedNode }) => {
   const graphRef = useRef();
+  const paintRing = useCallback(
+    (node, ctx) => {
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, 9 * 1.4, 0, 2 * Math.PI, false);
+      ctx.fillStyle = "orange";
+      ctx.fill();
+    },
+    [highlightedNode]
+  );
   return (
     graphData && (
       <ForceGraph2D
@@ -30,13 +39,23 @@ const TwoDGraph = ({ graphData }) => {
               const b = bigint & 255;
               return `rgba(${r}, ${g}, ${b}, ${opacity})`;
             };
-
+            if (
+              _.includes(highlightedNode, link.source.id) &&
+              _.includes(highlightedNode, link.target.id)
+            ) {
+              return "orange";
+            }
             return hexToRgba(color, 0.5);
           }
         }}
         nodeRelSize={10}
         linkWidth={2}
         nodeOpacity={1}
+        autoPauseRedraw={false}
+        nodeCanvasObjectMode={(node) =>
+          _.includes(highlightedNode, node.id) ? "before" : undefined
+        }
+        nodeCanvasObject={paintRing}
         enableNodeDrag={false}
         cooldownTime={3000}
         onEngineStop={() => {
@@ -48,7 +67,8 @@ const TwoDGraph = ({ graphData }) => {
 };
 
 TwoDGraph.propTypes = {
-  graphData: PropTypes.object.isRequired,
+  graphData: PropTypes.object,
+  highlightedNode: PropTypes.array,
 };
 
 export default TwoDGraph;

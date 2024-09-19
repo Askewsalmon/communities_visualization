@@ -52,13 +52,13 @@ const Header = ({
 };
 
 Header.propTypes = {
-  mode: PropTypes.string.isRequired,
-  setMode: PropTypes.func.isRequired,
-  visualizationMode: PropTypes.string.isRequired,
-  setVisualizationMode: PropTypes.func.isRequired,
-  selectOptions: PropTypes.array.isRequired,
-  graphName: PropTypes.string.isRequired,
-  setGraphName: PropTypes.func.isRequired,
+  mode: PropTypes.string,
+  setMode: PropTypes.func,
+  visualizationMode: PropTypes.string,
+  setVisualizationMode: PropTypes.func,
+  selectOptions: PropTypes.array,
+  graphName: PropTypes.string,
+  setGraphName: PropTypes.func,
 };
 
 export default Header;

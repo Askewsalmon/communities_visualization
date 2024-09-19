@@ -30,6 +30,7 @@ function App() {
   const [mode, setMode] = useState(undefined);
   const [visualizationMode, setVisualizationMode] = useState("2D");
   const [cliques, setCliques] = useState(undefined);
+  const [highlightedNode, setHighlightedNode] = useState(undefined);
   const [communities, setCommunities] = useState(undefined);
   const [graphName, setGraphName] = useState(undefined);
   const [nodeColors, setNodeColors] = useState([]);
@@ -109,9 +110,15 @@ function App() {
       <SideInformation
         graphData={graphData}
         aggregations={cliques || communities}
+        setHighlightedNode={(nodes) => setHighlightedNode(nodes)}
+        highlightedNode={highlightedNode}
       />
-      {visualizationMode === "3D" && <ThreeDGraph graphData={graphData} />}
-      {visualizationMode === "2D" && <TwoDGraph graphData={graphData} />}
+      {visualizationMode === "2D" && (
+        <TwoDGraph graphData={graphData} highlightedNode={highlightedNode} />
+      )}
+      {visualizationMode === "3D" && (
+        <ThreeDGraph graphData={graphData} highlightedNode={highlightedNode} />
+      )}
     </Layout>
   );
 }

@@ -1,10 +1,11 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import * as THREE from "three";
 const ThreeDGraph = ({ graphData, highlightedNode }) => {
   const graphRef = useRef();
+  const [firstRender, setFirstRender] = useState(true);
 
   const moveCameraPosition = useCallback(
     (node, distance) => {
@@ -24,14 +25,9 @@ const ThreeDGraph = ({ graphData, highlightedNode }) => {
   );
 
   useEffect(() => {
-    if (highlightedNode) {
-      if (!_.isEmpty(highlightedNode)) {
-        const node = _.find(graphData.nodes, { id: highlightedNode[0] });
-        moveCameraPosition(node, 1000);
-      } else {
-        const node = graphData.nodes[0];
-        moveCameraPosition(node, 1500);
-      }
+    if (highlightedNode && !_.isEmpty(highlightedNode)) {
+      const node = _.find(graphData.nodes, { id: highlightedNode[0] });
+      moveCameraPosition(node, 1000);
     }
   }, [highlightedNode]);
   return (
@@ -56,7 +52,6 @@ const ThreeDGraph = ({ graphData, highlightedNode }) => {
             return source.color;
           }
         }}
-        autoPauseRedraw={false}
         nodeThreeObject={(node) => {
           const obj = new THREE.Mesh(
             new THREE.SphereGeometry(5),
@@ -85,7 +80,8 @@ const ThreeDGraph = ({ graphData, highlightedNode }) => {
         linkOpacity={0.6}
         cooldownTime={3000}
         onEngineStop={() => {
-          if (!highlightedNode || _.isEmpty(highlightedNode)) {
+          if (!highlightedNode && firstRender) {
+            setFirstRender(false);
             graphRef.current.zoomToFit(1000);
           }
         }}

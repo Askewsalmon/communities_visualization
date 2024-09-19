@@ -85,7 +85,7 @@ const SideInformation = ({
                                       data.children[0].id
                                     )
                                   ) {
-                                    setHighlightedNode([]);
+                                    setHighlightedNode(undefined);
                                   } else {
                                     const nodes = data.children.map(
                                       (child) => child.id

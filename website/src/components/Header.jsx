@@ -9,6 +9,7 @@ const Header = ({
   graphName,
   setGraphName,
   setVisualizationMode,
+  setHighlightedNode,
 }) => {
   return (
     <header className="bg-transparent w-full fixed z-40">
@@ -22,13 +23,19 @@ const Header = ({
           <div className="flex border-white border-solid rounded-lg border h-fit mr-6">
             <Button
               label="2D Graph"
-              onClick={() => setVisualizationMode("2D")}
+              onClick={() => {
+                setHighlightedNode(undefined);
+                setVisualizationMode("2D");
+              }}
               active={visualizationMode == "2D"}
             />
             <Button
               label="3D Graph"
               isRight
-              onClick={() => setVisualizationMode("3D")}
+              onClick={() => {
+                setHighlightedNode(undefined);
+                setVisualizationMode("3D");
+              }}
               active={visualizationMode === "3D"}
             />
           </div>
@@ -59,6 +66,7 @@ Header.propTypes = {
   selectOptions: PropTypes.array,
   graphName: PropTypes.string,
   setGraphName: PropTypes.func,
+  setHighlightedNode: PropTypes.func,
 };
 
 export default Header;

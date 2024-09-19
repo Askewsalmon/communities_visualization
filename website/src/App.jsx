@@ -53,9 +53,9 @@ function App() {
   }, []);
   useEffect(() => {
     if (graphName && mode) {
-      setHighlightedNode(undefined);
       const data = graphDictionary[graphName][mode];
       if (mode === "cliques") {
+        setHighlightedNode(undefined);
         setNodeColors([]);
         setCommunities(undefined);
         let colors = [];
@@ -99,6 +99,7 @@ function App() {
       });
     }
   }, [nodeColors]);
+
   return (
     <Layout
       selectOptions={selectOptions}
@@ -108,6 +109,7 @@ function App() {
       setMode={setMode}
       visualizationMode={visualizationMode}
       setVisualizationMode={setVisualizationMode}
+      setHighlightedNode={setHighlightedNode}
     >
       <SideInformation
         graphData={graphData}

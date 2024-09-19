@@ -9,6 +9,7 @@ const Layout = ({
   setMode,
   visualizationMode,
   setVisualizationMode,
+  setHighlightedNode,
 }) => {
   return (
     <>
@@ -20,6 +21,7 @@ const Layout = ({
         setMode={setMode}
         visualizationMode={visualizationMode}
         setVisualizationMode={setVisualizationMode}
+        setHighlightedNode={setHighlightedNode}
       />
       <div className="w-full bg-slate-500">
         <div className="container mx-auto">{children}</div>
@@ -37,6 +39,7 @@ Layout.propTypes = {
   selectOptions: PropTypes.array,
   graphName: PropTypes.string,
   setGraphName: PropTypes.func,
+  setHighlightedNode: PropTypes.func,
 };
 
 export default Layout;

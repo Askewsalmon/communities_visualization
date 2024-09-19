@@ -1,6 +1,6 @@
 import { ForceGraph2D } from "react-force-graph";
 import PropTypes from "prop-types";
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import _ from "lodash";
 
 const TwoDGraph = ({ graphData, highlightedNode }) => {
@@ -14,6 +14,33 @@ const TwoDGraph = ({ graphData, highlightedNode }) => {
     },
     [highlightedNode]
   );
+  const moveCameraPosition = useCallback(
+    (node, distance) => {
+      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+
+      graphRef.current.cameraPosition(
+        {
+          x: node.x * distRatio,
+          y: node.y * distRatio,
+        },
+        node,
+        6000
+      );
+    },
+    [graphRef]
+  );
+  useEffect(() => {
+    if (highlightedNode) {
+      if (!_.isEmpty(highlightedNode)) {
+        const node = _.find(graphData.nodes, { id: highlightedNode[0] });
+        graphRef.current.centerAt(node.x, node.y, 3000);
+        graphRef.current.zoom(1, 3000);
+      } else {
+        graphRef.current.centerAt(0, 0, 3000);
+        graphRef.current.zoom(0.4, 3000);
+      }
+    }
+  }, [highlightedNode]);
   return (
     graphData && (
       <ForceGraph2D

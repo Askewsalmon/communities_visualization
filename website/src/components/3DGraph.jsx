@@ -1,18 +1,39 @@
-import { useRef, useCallback } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import PropTypes from "prop-types";
 import _ from "lodash";
+import * as THREE from "three";
 const ThreeDGraph = ({ graphData, highlightedNode }) => {
   const graphRef = useRef();
-  const paintRing = useCallback(
-    (node, ctx) => {
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, node.z, 9 * 1.4, 0, 2 * Math.PI, false);
-      ctx.fillStyle = "orange";
-      ctx.fill();
+
+  const moveCameraPosition = useCallback(
+    (node, distance) => {
+      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+
+      graphRef.current.cameraPosition(
+        {
+          x: node.x * distRatio,
+          y: node.y * distRatio,
+          z: node.z * distRatio,
+        },
+        node,
+        6000
+      );
     },
-    [highlightedNode]
+    [graphRef]
   );
+
+  useEffect(() => {
+    if (highlightedNode) {
+      if (!_.isEmpty(highlightedNode)) {
+        const node = _.find(graphData.nodes, { id: highlightedNode[0] });
+        moveCameraPosition(node, 1000);
+      } else {
+        const node = graphData.nodes[0];
+        moveCameraPosition(node, 1500);
+      }
+    }
+  }, [highlightedNode]);
   return (
     graphData && (
       <ForceGraph3D
@@ -21,7 +42,6 @@ const ThreeDGraph = ({ graphData, highlightedNode }) => {
         d3AlphaDecay={0.01}
         d3VelocityDecay={0.5}
         backgroundColor="black"
-        nodeColor={(node) => node.color}
         linkColor={(link) => {
           if (
             _.includes(highlightedNode, link.source.id) &&
@@ -37,10 +57,27 @@ const ThreeDGraph = ({ graphData, highlightedNode }) => {
           }
         }}
         autoPauseRedraw={false}
-        nodeCanvasObjectMode={(node) =>
-          _.includes(highlightedNode, node.id) ? "before" : undefined
-        }
-        nodeCanvasObject={paintRing}
+        nodeThreeObject={(node) => {
+          const obj = new THREE.Mesh(
+            new THREE.SphereGeometry(5),
+            new THREE.MeshBasicMaterial({ color: node.color || "blue" })
+          );
+          if (_.includes(highlightedNode, node.id)) {
+            const outlineMaterial = new THREE.MeshBasicMaterial({
+              color: "orange",
+              transparent: true,
+              opacity: 0.5,
+              side: THREE.BackSide,
+            });
+            const outlineGeometry = new THREE.SphereGeometry(8, 32, 32);
+            const outlineMesh = new THREE.Mesh(
+              outlineGeometry,
+              outlineMaterial
+            );
+            obj.add(outlineMesh);
+          }
+          return obj;
+        }}
         linkWidth={4}
         nodeRelSize={6}
         enableNodeDrag={false}
@@ -48,7 +85,9 @@ const ThreeDGraph = ({ graphData, highlightedNode }) => {
         linkOpacity={0.6}
         cooldownTime={3000}
         onEngineStop={() => {
-          graphRef.current.zoomToFit(1000);
+          if (!highlightedNode || _.isEmpty(highlightedNode)) {
+            graphRef.current.zoomToFit(1000);
+          }
         }}
       />
     )

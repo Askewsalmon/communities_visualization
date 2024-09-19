@@ -53,6 +53,7 @@ function App() {
   }, []);
   useEffect(() => {
     if (graphName && mode) {
+      setHighlightedNode(undefined);
       const data = graphDictionary[graphName][mode];
       if (mode === "cliques") {
         setNodeColors([]);
@@ -68,6 +69,7 @@ function App() {
         });
         setNodeColors(colors);
       } else if (mode === "community") {
+        setHighlightedNode(undefined);
         setNodeColors([]);
         setCliques(undefined);
         let colors = [];

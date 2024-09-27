@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import ThreeDGraph from "./components/3DGraph";
 import TwoDGraph from "./components/2DGraph";
 import _ from "lodash";
+import SideInformation from "./components/SideInformation";
 
 const selectOptions = [
   { value: "Food", label: "Food (620)" },
@@ -29,6 +30,7 @@ function App() {
   const [mode, setMode] = useState(undefined);
   const [visualizationMode, setVisualizationMode] = useState("2D");
   const [cliques, setCliques] = useState(undefined);
+  const [highlightedNode, setHighlightedNode] = useState(undefined);
   const [communities, setCommunities] = useState(undefined);
   const [graphName, setGraphName] = useState(undefined);
   const [nodeColors, setNodeColors] = useState([]);
@@ -53,6 +55,7 @@ function App() {
     if (graphName && mode) {
       const data = graphDictionary[graphName][mode];
       if (mode === "cliques") {
+        setHighlightedNode(undefined);
         setNodeColors([]);
         setCommunities(undefined);
         let colors = [];
@@ -66,6 +69,7 @@ function App() {
         });
         setNodeColors(colors);
       } else if (mode === "community") {
+        setHighlightedNode(undefined);
         setNodeColors([]);
         setCliques(undefined);
         let colors = [];
@@ -95,6 +99,7 @@ function App() {
       });
     }
   }, [nodeColors]);
+
   return (
     <Layout
       selectOptions={selectOptions}
@@ -104,9 +109,20 @@ function App() {
       setMode={setMode}
       visualizationMode={visualizationMode}
       setVisualizationMode={setVisualizationMode}
+      setHighlightedNode={setHighlightedNode}
     >
-      {visualizationMode === "3D" && <ThreeDGraph graphData={graphData} />}
-      {visualizationMode === "2D" && <TwoDGraph graphData={graphData} />}
+      <SideInformation
+        graphData={graphData}
+        aggregations={cliques || communities}
+        setHighlightedNode={(nodes) => setHighlightedNode(nodes)}
+        highlightedNode={highlightedNode}
+      />
+      {visualizationMode === "2D" && (
+        <TwoDGraph graphData={graphData} highlightedNode={highlightedNode} />
+      )}
+      {visualizationMode === "3D" && (
+        <ThreeDGraph graphData={graphData} highlightedNode={highlightedNode} />
+      )}
     </Layout>
   );
 }

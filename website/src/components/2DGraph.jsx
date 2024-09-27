@@ -1,10 +1,29 @@
 import { ForceGraph2D } from "react-force-graph";
 import PropTypes from "prop-types";
-import { useRef } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import _ from "lodash";
 
-const TwoDGraph = ({ graphData }) => {
+const TwoDGraph = ({ graphData, highlightedNode }) => {
   const graphRef = useRef();
+  const paintRing = useCallback(
+    (node, ctx) => {
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, 9 * 1.4, 0, 2 * Math.PI, false);
+      ctx.fillStyle = "orange";
+      ctx.fill();
+    },
+    [highlightedNode]
+  );
+  useEffect(() => {
+    if (highlightedNode && !_.isEmpty(highlightedNode)) {
+      const node = _.find(graphData.nodes, { id: highlightedNode[0] });
+      graphRef.current.centerAt(node.x, node.y, 3000);
+      graphRef.current.zoom(1, 3000);
+    } else if (graphRef && graphData) {
+      graphRef.current.centerAt(0, 0, 3000);
+      graphRef.current.zoom(0.4, 3000);
+    }
+  }, [highlightedNode]);
   return (
     graphData && (
       <ForceGraph2D
@@ -30,17 +49,29 @@ const TwoDGraph = ({ graphData }) => {
               const b = bigint & 255;
               return `rgba(${r}, ${g}, ${b}, ${opacity})`;
             };
-
+            if (
+              _.includes(highlightedNode, link.source.id) &&
+              _.includes(highlightedNode, link.target.id)
+            ) {
+              return "orange";
+            }
             return hexToRgba(color, 0.5);
           }
         }}
         nodeRelSize={10}
         linkWidth={2}
         nodeOpacity={1}
+        autoPauseRedraw={false}
+        nodeCanvasObjectMode={(node) =>
+          _.includes(highlightedNode, node.id) ? "before" : undefined
+        }
+        nodeCanvasObject={paintRing}
         enableNodeDrag={false}
         cooldownTime={3000}
         onEngineStop={() => {
-          graphRef.current.zoomToFit(1000);
+          if (!highlightedNode || _.isEmpty(highlightedNode)) {
+            graphRef.current.zoomToFit(1000);
+          }
         }}
       />
     )
@@ -48,7 +79,8 @@ const TwoDGraph = ({ graphData }) => {
 };
 
 TwoDGraph.propTypes = {
-  graphData: PropTypes.object.isRequired,
+  graphData: PropTypes.object,
+  highlightedNode: PropTypes.array,
 };
 
 export default TwoDGraph;

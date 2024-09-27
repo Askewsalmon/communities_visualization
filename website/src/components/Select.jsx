@@ -6,7 +6,6 @@ import {
   ListboxOption,
 } from "@headlessui/react";
 const CustomSelect = ({ selectOptions, value, onChange }) => {
-  console.log(value);
   return (
     <Listbox value={value} onChange={onChange}>
       <div className="relative mr-6 w-40 h-[2.2rem]">
@@ -42,9 +41,9 @@ const CustomSelect = ({ selectOptions, value, onChange }) => {
 };
 
 CustomSelect.propTypes = {
-  selectOptions: PropTypes.array.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  selectOptions: PropTypes.array,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 export default CustomSelect;
